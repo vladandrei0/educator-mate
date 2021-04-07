@@ -1,0 +1,7 @@
+// https://github.com/nblthree/nextjs-with-material-ui-and-styled-components/blob/master/.babelrc
+
+{
+    "presets": ["next/babel"],
+    "plugins": [["styled-components", { "ssr": true }]]
+  }
+  
