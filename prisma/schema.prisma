@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Categorieontema {
+  temaId        Int
+  categorieId   Int
+  CategorieTema CategorieTema @relation(fields: [categorieId], references: [id])
+  Teme          Teme          @relation(fields: [temaId], references: [id])
+
+  @@id([temaId, categorieId])
+}
+
+model CategorieTema {
+  id              Int               @id @default(autoincrement())
+  nume            String
+  Categorieontema Categorieontema[]
+}
+
+model Clasa {
+  id    Int     @id @default(autoincrement())
+  nume  String
+  oras  String
+  grupa String
+  Copil Copil[]
+  User  User[]
+}
+
+model Copil {
+  id      Int    @id @default(autoincrement())
+  nume    String
+  varsta  Int
+  clasaId Int
+  Clasa   Clasa  @relation(fields: [clasaId], references: [id])
+}
+
+model Domenii {
+  id     Int      @id @default(autoincrement())
+  nume   String   @unique
+  Fisa   Fisa[]
+  Lectie Lectie[]
+}
+
+model Filterterms {
+  id     Int    @id @default(autoincrement())
+  filter String
+}
+
+model Fisa {
+  id                 Int         @id @default(autoincrement())
+  nume               String
+  clean_name         String
+  temeId             Int?
+  lectieId           Int?
+  domeniiId          Int?
+  instructiuni       String?
+  instructiuni_clean String?
+  materiale          String?
+  poza               String?
+  pdf                String?
+  pdfpages           Int?
+  fisaId             Int?
+  shares             Int?
+  downloads          Int?
+  likes              Int?
+  tip_colorat        Boolean     @default(false)
+  tip_decupat        Boolean     @default(false)
+  tip_lipit          Boolean     @default(false)
+  tip_scris          Boolean     @default(false)
+  tip_modelat        Boolean     @default(false)
+  tip_puzzle         Boolean     @default(false)
+  tip_poezie         Boolean     @default(false)
+  tip_proiect        Boolean     @default(false)
+  tip_poveste        Boolean     @default(false)
+  createdAt          DateTime    @default(now())
+  grupa_mica         Boolean     @default(false)
+  grupa_mij          Boolean     @default(false)
+  grupa_mare         Boolean     @default(false)
+  slug               String
+  Domenii            Domenii?    @relation(fields: [domeniiId], references: [id])
+  Fisa               Fisa?       @relation("FisaToFisa_fisaId", fields: [fisaId], references: [id])
+  Lectie             Lectie?     @relation(fields: [lectieId], references: [id])
+  Teme               Teme?       @relation(fields: [temeId], references: [id])
+  other_Fisa         Fisa[]      @relation("FisaToFisa_fisaId")
+  Fise_user          Fise_user[]
+}
+
+model Fise_user {
+  liked     Boolean @default(false)
+  no_shares Int     @default(0)
+  no_dw     Int     @default(0)
+  no_views  Int     @default(0)
+  fisaId    Int
+  userId    Int
+  Fisa      Fisa    @relation(fields: [fisaId], references: [id])
+  User      User    @relation(fields: [userId], references: [id])
+
+  @@id([userId, fisaId])
+}
+
+model Lectie {
+  id        Int     @id @default(autoincrement())
+  nume      String  @unique
+  domeniiId Int
+  Domenii   Domenii @relation(fields: [domeniiId], references: [id])
+  Fisa      Fisa[]
+}
+
+model Searchterms {
+  id     Int    @id @default(autoincrement())
+  search String
+}
+
+model Teme {
+  id              Int               @id @default(autoincrement())
+  nume            String            @unique
+  clean           String
+  slug            String
+  descriere       String?
+  poza            String?
+  createdAt       DateTime          @default(now())
+  Categorieontema Categorieontema[]
+  Fisa            Fisa[]
+  Teme_user       Teme_user[]
+}
+
+model Teme_user {
+  temaId    Int
+  userId    Int
+  liked     Boolean @default(false)
+  no_shares Int     @default(0)
+  no_dw     Int     @default(0)
+  no_views  Int     @default(0)
+  Teme      Teme    @relation(fields: [temaId], references: [id])
+  User      User    @relation(fields: [userId], references: [id])
+
+  @@id([temaId, userId])
+}
+
+model User {
+  id                Int         @id @default(autoincrement())
+  fbuid             String?     @unique
+  email             String      @unique
+  role              Role        @default(USER)
+  address           String?
+  nume              String?
+  prenume           String?
+  poza              String?
+  avatar            Int         @default(0)
+  last_visit        DateTime?
+  registration_date DateTime
+  clasaId           Int?
+  username          String?
+  Clasa             Clasa?      @relation(fields: [clasaId], references: [id])
+  Fise_user         Fise_user[]
+  Teme_user         Teme_user[]
+  rolId             Int?
+  Rol               Rol?        @relation(fields: [rolId], references: [id])
+  grupa_varsta      Int?
+}
+
+model Rol {
+  id        Int     @id @default(autoincrement())
+  role_name String? @unique
+  User      User[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}

@@ -1,0 +1,6 @@
+export const large = '@media (min-width: 1200px)'
+export const medium = '@media (min-width: 992px) and (max-width: 1199px)'
+export const small = '@media (min-width: 421px) and (max-width: 991px)'
+export const xsmall = '@media (max-width: 420px)'
+export const smallAndMedium = '@media (max-width: 1199px)'
+export const xsmallAndSmall = '@media (max-width: 991px)'
